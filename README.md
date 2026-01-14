@@ -70,9 +70,9 @@ Ikuti langkah ini untuk menjalankan project di komputer Anda:
     - Copy file `.env.example` menjadi `.env`.
     - Sesuaikan koneksi database Anda:
     ```env
-    DB_DATABASE=dbprofil_23312241
-    DB_USERNAME=root
-    DB_PASSWORD=
+    DB_DATABASE= **nama database yang sudah dibuat di phpmyadmin**
+    DB_USERNAME= **username database**
+    DB_PASSWORD= **password database**
     ```
 
 4.  **Siapkan Database**
