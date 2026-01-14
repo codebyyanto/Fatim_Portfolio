@@ -9,10 +9,12 @@ class Skill extends Model
 {
     use HasFactory;
 
+    protected $table = 'tbkeahlian_23312241';
+    
     protected $fillable = [
-        'name',
+        'nama_keahlian',
         'kategori_23312241',
-        'description',
+        'deskripsi',
         'icon',
         'status',
     ];

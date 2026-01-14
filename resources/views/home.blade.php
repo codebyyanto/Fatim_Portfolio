@@ -178,13 +178,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($projects as $project)
                 <div class="bg-gray-50 rounded-xl p-6 border-t-4 border-blue-500 hover:-translate-y-2 transition-all duration-200 shadow-md">
-                    <h4 class="text-xl font-bold text-blue-600 mb-3">{{ $project->name }}</h4>
+                    <h4 class="text-xl font-bold text-blue-600 mb-3">{{ $project->nama_proyek }}</h4>
                     <p class="text-gray-600 line-clamp-4 mb-4">
-                        {{ $project->description }}
+                        {{ $project->deskripsi }}
                     </p>
                     <div class="space-y-2 text-sm mb-4">
-                        <p><strong class="text-gray-700">Tahun:</strong> {{ $project->year }}</p>
-                        <p><strong class="text-gray-700">Jenis:</strong> {{ $project->type }}</p>
+                        <p><strong class="text-gray-700">Tahun:</strong> {{ $project->tahun_proyek }}</p>
+                        <p><strong class="text-gray-700">Jenis:</strong> {{ $project->jenis_proyek }}</p>
                     </div>
                     <a href="{{ route('projects.show', $project->id) }}" class="inline-block w-full text-center bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white py-2 rounded-lg transition-colors duration-200 font-semibold">
                         Lihat Detail
@@ -221,12 +221,12 @@
                     @else
                         <i class="fas fa-star mr-2"></i>
                     @endif
-                    {{ $skill->name }}
+                    {{ $skill->nama_keahlian }}
                 </div>
                 @empty
-                <!-- Default placeholders if empty -->
-                <div class="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-4 rounded-xl text-center font-semibold">
-                    <i class="fas fa-code mr-2"></i> Web Development
+                <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-8">
+                    <i class="fas fa-star text-4xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-500">Belum ada keahlian yang ditampilkan</p>
                 </div>
                 @endforelse
             </div>

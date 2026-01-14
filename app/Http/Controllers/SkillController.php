@@ -14,11 +14,11 @@ class SkillController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+            $query->where('nama_keahlian', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%");
         }
 
-        $skills = $query->orderBy('name')->get();
+        $skills = $query->orderBy('nama_keahlian')->get();
 
         return view('skills.index', compact('skills'));
     }
@@ -26,14 +26,14 @@ class SkillController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100|unique:skills,name',
+            'nama_keahlian' => 'required|string|max:100|unique:tbkeahlian_23312241,nama_keahlian',
             'kategori_23312241' => 'required|string|in:Programming Language,Web Development,Mobile Development,Database,UI/UX Design,Desain Grafis dan Multimedia,Jaringan,Data Analis',
-            'description' => 'required|string',
+            'deskripsi' => 'required|string',
             'icon' => 'required|file|image|max:2048', // Required on create
             'status' => 'required|in:active,inactive',
         ]);
 
-        $data = $request->only(['name', 'kategori_23312241', 'description', 'status']);
+        $data = $request->only(['nama_keahlian', 'kategori_23312241', 'deskripsi', 'status']);
         
         // Handle Icon Upload
         if ($request->hasFile('icon')) {
@@ -43,20 +43,22 @@ class SkillController extends Controller
 
         Skill::create($data);
 
-        return redirect()->route('skills.index')->with('success', 'Keahlian berhasil ditambahkan.');
+        Skill::create($data);
+
+        return response()->json(['message' => 'Keahlian berhasil ditambahkan.', 'status' => 'success']);
     }
 
     public function update(Request $request, Skill $skill)
     {
         $request->validate([
-            'name' => 'required|string|max:100|unique:skills,name,'.$skill->id,
+            'nama_keahlian' => 'required|string|max:100|unique:tbkeahlian_23312241,nama_keahlian,'.$skill->id,
             'kategori_23312241' => 'required|string|in:Programming Language,Web Development,Mobile Development,Database,UI/UX Design,Desain Grafis dan Multimedia,Jaringan,Data Analis',
-            'description' => 'required|string',
+            'deskripsi' => 'required|string',
             'icon' => 'nullable|file|image|max:2048',
             'status' => 'required|in:active,inactive',
         ]);
 
-        $data = $request->only(['name', 'kategori_23312241', 'description', 'status']);
+        $data = $request->only(['nama_keahlian', 'kategori_23312241', 'deskripsi', 'status']);
 
         if ($request->hasFile('icon')) {
             // Delete old icon if exists and is not a font-awesome class
@@ -70,7 +72,9 @@ class SkillController extends Controller
 
         $skill->update($data);
 
-        return redirect()->route('skills.index')->with('success', 'Keahlian berhasil diperbarui.');
+        $skill->update($data);
+
+        return response()->json(['message' => 'Keahlian berhasil diperbarui.', 'status' => 'success']);
     }
 
     public function destroy(Skill $skill)

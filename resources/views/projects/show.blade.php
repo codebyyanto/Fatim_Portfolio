@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $project->name }} - Detail Proyek</title>
+    <title>{{ $project->nama_proyek }} - Detail Proyek</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -11,8 +11,8 @@
     <!-- Header -->
     <header class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white py-16 shadow-lg">
         <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-3">{{ $project->name }}</h1>
-            <p class="text-lg opacity-90">{{ $project->type }} • {{ $project->year }}</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3">{{ $project->nama_proyek }}</h1>
+            <p class="text-lg opacity-90">{{ $project->jenis_proyek }} • {{ $project->tahun_proyek }}</p>
         </div>
     </header>
 
@@ -34,11 +34,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @php
                 $infoFields = [
-                    'Nama Proyek' => $project->name,
-                    'Jenis Proyek' => $project->type,
-                    'Tahun Proyek' => $project->year,
-                    'Durasi Proyek' => $project->duration,
-                    'Tim Pengembang' => $project->team
+                    'Nama Proyek' => $project->nama_proyek,
+                    'Jenis Proyek' => $project->jenis_proyek,
+                    'Tahun Proyek' => $project->tahun_proyek,
+                    'Durasi Proyek' => $project->durasi,
+                    'Tim Pengembang' => $project->tim_pengembang
                 ];
                 @endphp
                 @foreach ($infoFields as $label => $value)
@@ -63,8 +63,8 @@
                 <i class="fas fa-file-alt"></i> Deskripsi Lengkap
             </h2>
             <div class="prose max-w-none leading-relaxed text-gray-700">
-                @if(!empty($project->description) && $project->description !== '0')
-                    {!! nl2br(e($project->description)) !!}
+                @if(!empty($project->deskripsi) && $project->deskripsi !== '0')
+                    {!! nl2br(e($project->deskripsi)) !!}
                 @else
                     <p class='text-gray-500 italic'><i>Deskripsi proyek tidak tersedia.</i></p>
                 @endif
@@ -72,28 +72,28 @@
         </section>
 
         <!-- Gambar -->
-        @if($project->image)
+        @if($project->gambar)
         <section class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             <h2 class="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-3 border-b pb-3">
                 <i class="fas fa-image"></i> Tampilan Proyek
             </h2>
             <div class="w-full bg-gray-100 rounded-xl overflow-hidden shadow-lg flex items-center justify-center group">
-                <img src="{{ asset('storage/' . $project->image) }}"
-                     alt="Gambar {{ $project->name }}"
+                <img src="{{ asset('storage/' . $project->gambar) }}"
+                     alt="Gambar {{ $project->nama_proyek }}"
                      class="max-h-96 w-auto object-contain transition-transform duration-300 group-hover:scale-105 bg-white">
             </div>
         </section>
         @endif
 
         <!-- Video Demo -->
-        @if($project->video)
+        @if($project->video_demo)
         <section class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             <h2 class="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-3 border-b pb-3">
                 <i class="fas fa-video"></i> Video Demo
             </h2>
             <div class="relative w-full h-0 pb-[56.25%] bg-black rounded-xl overflow-hidden shadow-lg">
                 <video class="absolute top-0 left-0 w-full h-full" controls>
-                    <source src="{{ asset('storage/' . $project->video) }}" type="video/mp4">
+                    <source src="{{ asset('storage/' . $project->video_demo) }}" type="video/mp4">
                     Browser Anda tidak mendukung pemutaran video.
                 </video>
             </div>
@@ -104,7 +104,7 @@
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-gray-900 to-blue-900 text-white py-8 mt-10">
         <div class="container mx-auto px-4 text-center">
-            <p class="text-lg font-semibold">{{ $project->name }} • {{ $project->year }}</p>
+            <p class="text-lg font-semibold">{{ $project->nama_proyek }} • {{ $project->tahun_proyek }}</p>
             <p class="text-gray-400 mt-2">&copy; {{ date('Y') }} Semua hak dilindungi.</p>
         </div>
     </footer>

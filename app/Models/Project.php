@@ -9,15 +9,17 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $table = 'tbproyek_23312241';
+
     protected $fillable = [
-        'name',
-        'year',
-        'type',
-        'team',
-        'description',
-        'duration',
-        'image',
-        'video',
+        'nama_proyek',
+        'tahun_proyek',
+        'jenis_proyek',
+        'tim_pengembang',
+        'deskripsi',
+        'durasi',
+        'gambar',
+        'video_demo',
         'status',
     ];
 }

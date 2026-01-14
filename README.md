@@ -79,8 +79,10 @@ Ikuti langkah ini untuk menjalankan project di komputer Anda:
     ```bash
     php artisan key:generate
     php artisan migrate
+    php artisan db:seed
     php artisan storage:link
     ```
+    > **Note**: Perintah `db:seed` akan mengisi database dengan data contoh (Proyek & Keahlian) agar website tidak kosong saat pertama kali dijalankan.
 
 5.  **Jalankan Aplikasi**
     Buka 2 terminal terpisah:

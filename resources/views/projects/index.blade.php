@@ -47,27 +47,27 @@
                 @forelse($projects as $project)
                 <tr class="hover:bg-gray-50 transition-colors duration-200">
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                        {{ $project->name }}
+                        {{ $project->nama_proyek }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-700">
-                        {{ $project->year }}
+                        {{ $project->tahun_proyek }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-700">
-                        {{ $project->type }}
+                        {{ $project->jenis_proyek }}
                     </td>
                     <td class="px-4 py-2 text-gray-700">
-                         {{ Str::words($project->team, 1, '') }}
+                         {{ Str::words($project->tim_pengembang, 1, '') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-700">
-                        {{ $project->duration }}
+                        {{ $project->durasi }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="w-20 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center">
-                            @if($project->image)
-                                <img src="{{ asset('storage/' . $project->image) }}" 
-                                     alt="{{ $project->name }}" 
+                            @if($project->gambar)
+                                <img src="{{ asset('storage/' . $project->gambar) }}" 
+                                     alt="{{ $project->nama_proyek }}" 
                                      class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                                     onclick="showImageModal('{{ asset('storage/' . $project->image) }}')">
+                                     onclick="showImageModal('{{ asset('storage/' . $project->gambar) }}')">
                             @else
                                 <i class="fas fa-image text-gray-400 text-xl"></i>
                             @endif
@@ -75,17 +75,17 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="w-20 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center relative group">
-                            @if($project->video)
-                                @if(Str::startsWith($project->video, ['http://', 'https://']))
+                            @if($project->video_demo)
+                                @if(Str::startsWith($project->video_demo, ['http://', 'https://']))
                                     <!-- External Link (YouTube) -->
-                                    <a href="{{ $project->video }}" target="_blank" class="w-full h-full flex items-center justify-center bg-red-50 hover:bg-red-100 transition-colors">
+                                    <a href="{{ $project->video_demo }}" target="_blank" class="w-full h-full flex items-center justify-center bg-red-50 hover:bg-red-100 transition-colors">
                                         <i class="fab fa-youtube text-red-600 text-3xl"></i>
                                     </a>
                                 @else
                                     <!-- Local File -->
                                     <video muted class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                                           onclick="showVideoModal('{{ asset('storage/' . $project->video) }}')">
-                                        <source src="{{ asset('storage/' . $project->video) }}" type="video/mp4">
+                                           onclick="showVideoModal('{{ asset('storage/' . $project->video_demo) }}')">
+                                        <source src="{{ asset('storage/' . $project->video_demo) }}" type="video/mp4">
                                     </video>
                                 @endif
                             @else
@@ -103,14 +103,14 @@
                             <!-- Edit Button -->
                             <button onclick="editProject(this)"
                                     data-id="{{ $project->id }}"
-                                    data-name="{{ $project->name }}"
-                                    data-year="{{ $project->year }}"
-                                    data-type="{{ $project->type }}"
-                                    data-team="{{ $project->team }}"
-                                    data-description="{{ $project->description }}"
-                                    data-duration="{{ $project->duration }}"
-                                    data-image="{{ $project->image }}"
-                                    data-video="{{ $project->video }}"
+                                    data-name="{{ $project->nama_proyek }}"
+                                    data-year="{{ $project->tahun_proyek }}"
+                                    data-type="{{ $project->jenis_proyek }}"
+                                    data-team="{{ $project->tim_pengembang }}"
+                                    data-description="{{ $project->deskripsi }}"
+                                    data-duration="{{ $project->durasi }}"
+                                    data-image="{{ $project->gambar }}"
+                                    data-video="{{ $project->video_demo }}"
                                     data-status="{{ $project->status }}"
                                     class="bg-green-100 text-green-700 hover:bg-green-200 p-2 rounded-lg transition-colors duration-200">
                                 <i class="fas fa-edit"></i>
@@ -163,11 +163,17 @@
             @csrf
             <div id="methodField"></div>
             
+            <!-- Error Alert Container -->
+            <div id="modalErrorContainer" class="hidden mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <ul id="modalErrorList" class="list-disc list-inside mt-1"></ul>
+            </div>
+            
             <div class="space-y-6">
                 <!-- Nama Proyek -->
                 <div>
                     <label for="projectName" class="block text-sm font-semibold text-gray-700 mb-2">Nama Proyek</label>
-                    <input type="text" id="projectName" name="name" required
+                    <input type="text" id="projectName" name="nama_proyek" required
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                 </div>
                 
@@ -175,12 +181,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="projectYear" class="block text-sm font-semibold text-gray-700 mb-2">Tahun Proyek</label>
-                        <input type="number" id="projectYear" name="year" min="2000" max="2030" required
+                        <input type="number" id="projectYear" name="tahun_proyek" min="2000" max="2030" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                     </div>
                     <div>
                         <label for="projectType" class="block text-sm font-semibold text-gray-700 mb-2">Jenis Proyek</label>
-                        <select id="projectType" name="type" required
+                        <select id="projectType" name="jenis_proyek" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                             <option value="">Pilih Jenis</option>
                             <option value="Tugas Kuliah">Tugas Kuliah</option>
@@ -195,14 +201,14 @@
                 <!-- Tim Pengembang -->
                 <div>
                     <label for="projectTeam" class="block text-sm font-semibold text-gray-700 mb-2">Tim Pengembang</label>
-                    <input type="text" id="projectTeam" name="team" required
+                    <input type="text" id="projectTeam" name="tim_pengembang" required
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                 </div>
                 
                 <!-- Deskripsi -->
                 <div>
                     <label for="projectDescription" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Proyek</label>
-                    <textarea id="projectDescription" name="description" required rows="4"
+                    <textarea id="projectDescription" name="deskripsi" required rows="4"
                               placeholder="Masukkan deskripsi lengkap proyek..."
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"></textarea>
                 </div>
@@ -211,7 +217,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="projectDuration" class="block text-sm font-semibold text-gray-700 mb-2">Durasi Pengerjaan</label>
-                        <input type="text" id="projectDuration" name="duration" placeholder="Contoh: 3 bulan" required
+                        <input type="text" id="projectDuration" name="durasi" placeholder="Contoh: 3 bulan" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                     </div>
                     <div>
@@ -233,7 +239,7 @@
                                 <i class="fas fa-upload text-2xl text-gray-400 mb-2"></i>
                                 <p class="text-sm text-gray-500">Klik untuk upload gambar</p>
                             </div>
-                            <input type="file" id="projectImage" name="image" accept=".jpg,.jpeg,.png,.gif" 
+                            <input type="file" id="projectImage" name="gambar" accept=".jpg,.jpeg,.png,.gif" 
                                    onchange="previewImage(this)" class="hidden">
                         </label>
                     </div>
@@ -269,7 +275,7 @@
                                     <i class="fas fa-upload text-2xl text-gray-400 mb-2"></i>
                                     <p class="text-sm text-gray-500">Klik untuk upload video</p>
                                 </div>
-                                <input type="file" id="projectVideo" name="video" accept=".mp4,.avi,.mov,.wmv" 
+                                <input type="file" id="projectVideo" name="video_demo" accept=".mp4,.avi,.mov,.wmv" 
                                        onchange="previewVideo(this)" class="hidden">
                             </label>
                         </div>
@@ -326,7 +332,70 @@
     </div>
 </div>
 
+</div>
+
 <script>
+    // AJAX Form Handling
+    document.getElementById('projectForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        const submitBtn = document.getElementById('btnSubmit');
+        const errorContainer = document.getElementById('modalErrorContainer');
+        const errorList = document.getElementById('modalErrorList');
+        
+        // Reset errors
+        errorContainer.classList.add('hidden');
+        errorList.innerHTML = '';
+        
+        // Loading state
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Menyimpan...';
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST', // Method spoofing via _method handled by Laravel
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                if (response.status === 422) {
+                    // Validation Errors
+                    errorContainer.classList.remove('hidden');
+                    Object.values(data.errors).flat().forEach(error => {
+                        const li = document.createElement('li');
+                        li.textContent = error;
+                        errorList.appendChild(li);
+                    });
+                    // Scroll to top of form to see error
+                    document.querySelector('#projectModal > div').scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan sistem');
+                }
+            } else {
+                // Success
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorContainer.classList.remove('hidden');
+            const li = document.createElement('li');
+            li.textContent = error.message || 'Gagal menyimpan data. Silakan coba lagi.';
+            errorList.appendChild(li);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
+    });
+
     function toggleVideoSource() {
         const source = document.querySelector('input[name="video_source"]:checked').value;
         const fileSection = document.getElementById('videoFileSection');

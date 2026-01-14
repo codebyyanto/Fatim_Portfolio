@@ -44,7 +44,7 @@
                 @forelse($skills as $skill)
                 <tr class="hover:bg-gray-50 transition-colors duration-200">
                     <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                        {{ $skill->name }}
+                        {{ $skill->nama_keahlian }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-700">
                         @php
@@ -70,7 +70,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 text-gray-700 max-w-md">
-                        {{ $skill->description }}
+                        {{ $skill->deskripsi }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -78,9 +78,9 @@
                                 <i class="{{ $skill->icon }} text-blue-600 text-lg"></i>
                             @elseif(!empty($skill->icon))
                                 @if(Str::endsWith($skill->icon, '.svg'))
-                                    <img src="{{ asset('storage/' . $skill->icon) }}" alt="{{ $skill->name }}" class="w-10 h-10 object-contain">
+                                    <img src="{{ asset('storage/' . $skill->icon) }}" alt="{{ $skill->nama_keahlian }}" class="w-10 h-10 object-contain">
                                 @else
-                                    <img src="{{ asset('storage/' . $skill->icon) }}" alt="{{ $skill->name }}" class="w-full h-full object-cover">
+                                    <img src="{{ asset('storage/' . $skill->icon) }}" alt="{{ $skill->nama_keahlian }}" class="w-full h-full object-cover">
                                 @endif
                             @else
                                 <i class="fas fa-image text-gray-400 text-lg"></i>
@@ -94,7 +94,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center gap-2">
-                            <button onclick="editSkill({{ $skill->id }}, '{{ addslashes($skill->name) }}', '{{ addslashes($skill->kategori_23312241) }}', '{{ addslashes($skill->description) }}', '{{ addslashes($skill->icon) }}', '{{ $skill->status }}')"
+                            <button onclick="editSkill({{ $skill->id }}, '{{ addslashes($skill->nama_keahlian) }}', '{{ addslashes($skill->kategori_23312241) }}', '{{ addslashes($skill->deskripsi) }}', '{{ addslashes($skill->icon) }}', '{{ $skill->status }}')"
                                     class="bg-green-100 text-green-700 hover:bg-green-200 p-2 rounded-lg transition-colors duration-200">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -145,11 +145,17 @@
         <form method="POST" id="skillForm" enctype="multipart/form-data" class="p-6">
             @csrf
             <div id="methodField"></div>
+
+            <!-- Error Alert Container -->
+            <div id="modalErrorContainer" class="hidden mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <ul id="modalErrorList" class="list-disc list-inside mt-1"></ul>
+            </div>
             
             <div class="space-y-6">
                 <div>
                     <label for="skillName" class="block text-sm font-semibold text-gray-700 mb-2">Nama Keahlian *</label>
-                    <input type="text" id="skillName" name="name" required
+                    <input type="text" id="skillName" name="nama_keahlian" required
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                            placeholder="Contoh: PHP, JavaScript, UI/UX Design">
                 </div>
@@ -172,7 +178,7 @@
                 
                 <div>
                     <label for="skillDescription" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi *</label>
-                    <textarea id="skillDescription" name="description" required rows="4"
+                    <textarea id="skillDescription" name="deskripsi" required rows="4"
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                               placeholder="Jelaskan kemampuan dan pengalaman Anda dalam keahlian ini..."></textarea>
                 </div>
@@ -222,7 +228,71 @@
     </div>
 </div>
 
+</div>
+
 <script>
+    // AJAX Form Handling
+    document.getElementById('skillForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        // Find submit button (last button in form)
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const errorContainer = document.getElementById('modalErrorContainer');
+        const errorList = document.getElementById('modalErrorList');
+        
+        // Reset errors
+        errorContainer.classList.add('hidden');
+        errorList.innerHTML = '';
+        
+        // Loading state
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Menyimpan...';
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                if (response.status === 422) {
+                    // Validation Errors
+                    errorContainer.classList.remove('hidden');
+                    Object.values(data.errors).flat().forEach(error => {
+                        const li = document.createElement('li');
+                        li.textContent = error;
+                        errorList.appendChild(li);
+                    });
+                     // Scroll to top of modal
+                     document.querySelector('#skillModal > div').scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan sistem');
+                }
+            } else {
+                // Success
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorContainer.classList.remove('hidden');
+            const li = document.createElement('li');
+            li.textContent = error.message || 'Gagal menyimpan data. Silakan coba lagi.';
+            errorList.appendChild(li);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
+    });
+
     function openAddModal() {
         document.getElementById('modalTitle').textContent = 'Tambah Keahlian Baru';
         const form = document.getElementById('skillForm');
